@@ -1,6 +1,6 @@
 
 Description
-===========
+-----------
 This example shows how to create an input and data store channel on the 
 Arty A7 using the BTN0 and BTN1 buttons. In this example “nibbles” can 
 be loaded into two registers. For reliable data entry, it is necessary 
