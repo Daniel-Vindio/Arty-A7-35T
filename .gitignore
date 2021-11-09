@@ -1,3 +1,5 @@
 # Executables
 *.out
 *.vcd
+*.pdf
+*.txt
