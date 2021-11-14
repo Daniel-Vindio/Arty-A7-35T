@@ -8,6 +8,7 @@ INTENS = 4000  Acceptable brightness.
 INTENS = 4000  Acceptable brightness.
 INTENS = 4094  Minimum brightness.
 */
+`timescale 1ns/1ns
 
 module led_dimmer
 	#(parameter INTENS = 4000)

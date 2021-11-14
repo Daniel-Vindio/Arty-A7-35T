@@ -10,7 +10,7 @@ least significant bit.
 
 Finite State Machine (fsm) version.
 */
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 module synchro_register
 	#(parameter N = 4) // 4 bits = 1 "nibble".
 	(input clk, 

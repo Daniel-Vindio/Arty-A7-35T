@@ -8,7 +8,7 @@ version admits indefinite data entry, that is, the fifth bit that is
 entered deletes the one entered first. The last data entered is the 
 least significant bit.
 */
-
+`timescale 1ns/1ns
 module synchro_register
 	#(parameter N = 4) // 4 bits = 1 "nibble".
 	(input clk, 

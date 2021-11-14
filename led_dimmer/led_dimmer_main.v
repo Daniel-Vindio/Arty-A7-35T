@@ -1,3 +1,6 @@
+//Example for the implementation of the led dimmer 
+
+`timescale 1ns/1ns
 module main 
 	(input clk,
 	 input [3:0] sw,
