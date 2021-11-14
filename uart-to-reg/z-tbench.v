@@ -11,6 +11,7 @@ module test ();
 	
 	reg 				CLK = 1'b0;
 	reg 				RXD_PIN = 1'b1; //UART Recieve pin.
+	wire 				TXD_PIN; //UART Recieve pin.
 	reg 				SW_0 = 1'b0;    //Slide switch to enable reception.
 	wire [WORDSZ-1:0] 	BUS;
 	wire [WORDSZ-1:0] 	LED;
@@ -48,13 +49,14 @@ module test ();
 		end
 
 
-	uart_to_reg uut (CLK, RXD_PIN, SW_0, BUS, LED, STATE);
+	uart_to_reg uut (CLK, RXD_PIN, TXD_PIN, SW_0, LED);
 	
 /*
 	always #TCLK $display (
 		"Time = %0t, "  ,$time,
 		"CLK  = %b, "   ,CLK,
 		"RXD_PIN = %b, ",RXD_PIN,
+		"TXD_PIN = %b, ",TXD_PIN,
 		"SW_0 = %b, "   ,SW_0,
 		"BUS = %b, "    ,BUS,
 		"LED = %b, "    ,LED,

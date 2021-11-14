@@ -1,4 +1,3 @@
-
 // 
 // Module: uart_rx 
 // 
@@ -6,6 +5,7 @@
 // - UART reciever module.
 //
 `timescale 1ns/1ns
+
 module uart_rx(
 input  wire       clk          , // Top level system clock input.
 input  wire       resetn       , // Asynchronous active low reset.
