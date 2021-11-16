@@ -13,7 +13,7 @@ module test ();
 	reg 				RXD_PIN = 1'b1; //UART Recieve pin.
 	wire 				TXD_PIN; //UART Recieve pin.
 	reg 				SW_0 = 1'b0;    //Slide switch to enable reception.
-	wire [WORDSZ-1:0] 	BUS;
+//	wire [WORDSZ-1:0] 	BUS;
 	wire [WORDSZ-1:0] 	LED;
 	wire [3:0] 			STATE;
 	
@@ -41,8 +41,9 @@ module test ();
 	initial
 		begin
 			#40 SW_0 = 1'b1;
-			send_byte("A");
-			send_byte(0);
+			send_byte(" ");
+			send_byte(" ");
+			send_byte(" ");
 
 			$display("Finish simulation at time %d", $time);
 			$finish();
