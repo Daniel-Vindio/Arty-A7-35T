@@ -7,9 +7,9 @@
 module fsm
 #(parameter N = 8,
   parameter M = 128)		//Size of message to send.
-(input busy,			//Signal from TX module.
+(input busy,				//Signal from TX module.
  input clk,
- input start,			//Signal to start fsm.
+ input start,				//Signal to start fsm.
  input reset,
  input  [M-1:0] data,
  output reg enable,			//Signal to TX module
@@ -41,9 +41,12 @@ reg [5:0] next_state;
 //Outputs of every state.
 always @(*) begin
 	case (current_state)
-		IDLE   : bus = {N{1'b0}};
+		IDLE : begin 
+					enable = 1'b0;
+					bus = {N{1'b0}};
+			   end
 		BYTE_1 : begin 
-					enable = 1'b1;					
+					enable = 1'b1;				
 					bus = data[127:120];
 				 end
 		BYTE_2:  bus = data[119:112];
@@ -61,7 +64,8 @@ always @(*) begin
 		BYTE_14: bus = data[23:16];
 		BYTE_15: bus = data[15:8];
 		BYTE_16: bus = data[7:0];
-		STOP   : enable = 1'b0;					
+		//BYTE_16: bus = data[7:0];
+		//STOP   : enable = 1'b0;					
 	endcase
 end
 
@@ -74,7 +78,8 @@ always @(posedge clk)
 always @(*) begin
 	next_state = current_state;
 	  case (current_state)
-		IDLE   : if  ( !(busy & enable) ) next_state = BYTE_1;
+		//IDLE   : if  ( !busy & start ) next_state = BYTE_1;
+		IDLE   : if  ( start )   next_state = BYTE_1;
 		BYTE_1 : if  ( !busy )   next_state = BYTE_2;
 		BYTE_2 : if  ( !busy )   next_state = BYTE_3;
 		BYTE_3 : if  ( !busy )   next_state = BYTE_4;
@@ -90,90 +95,10 @@ always @(*) begin
 		BYTE_13 : if ( !busy )   next_state = BYTE_14;
 		BYTE_14 : if ( !busy )   next_state = BYTE_15;
 		BYTE_15 : if ( !busy )   next_state = BYTE_16;
-		BYTE_16 : if ( !busy ) 	 next_state = STOP;
-		STOP   : 				 next_state = IDLE;
+		BYTE_16 : if ( !busy ) 	 next_state = IDLE;
+		//BYTE_16 : if ( !busy ) 	 next_state = STOP;
+		//STOP   : 				 next_state = IDLE;
 		default : 				 next_state = IDLE;
 	  endcase
 	end
 endmodule
-
-module test();
-
-parameter N = 8, M = 128;
-parameter tclk = 5; 
-
-reg busy = 1;			
-reg clk = 0;
-reg start = 1;			
-reg reset = 1;
-reg  [M-1:0] data = "Wake up, Neo...";
-wire enable;			
-wire[N-1:0] bus;
-
-	initial
-		begin
-			$dumpfile ("fsm.vcd");
-			$dumpvars;
-		end
-	
-	always #(1*tclk) clk = ~clk;
-	
-	initial
-		begin
-			#(20*tclk) start = 0; busy = 0; reset = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-			#(20*tclk) busy = 0;
-			#(20*tclk) busy = 1;
-						
-			$finish;
-		end
-
-
-fsm uut (busy, clk, start, reset, data, enable, bus);
-
-	always #tclk $display (
-	"Time = %0t, CLK = %b,", $time, clk,
-	//"busy = %b, start = %b, reset = %b,", busy, start, reset,
-	"data = %h, enable = %b bus = %h", data, enable, bus);
-
-endmodule
-
-
-
-
-
-
-
-
-
-
-
-
-
-
