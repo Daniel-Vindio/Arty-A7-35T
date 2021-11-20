@@ -13,6 +13,7 @@ module fsm
  input reset,
  input  [M-1:0] data,
  output reg enable,			//Signal to TX module
+ output [5:0] state,		//Signal for testbench control.
  output reg [N-1:0] bus);
 
 localparam  IDLE   = 2'd0,
@@ -37,18 +38,16 @@ localparam  IDLE   = 2'd0,
 reg [5:0] current_state;
 reg [5:0] next_state;
 
+assign state = current_state;
 
 //Outputs of every state.
 always @(*) begin
 	case (current_state)
 		IDLE : begin 
-					enable = 1'b0;
+					enable = 1'b1;
 					bus = {N{1'b0}};
 			   end
-		BYTE_1 : begin 
-					enable = 1'b1;				
-					bus = data[127:120];
-				 end
+		BYTE_1 : bus = data[127:120];
 		BYTE_2:  bus = data[119:112];
 		BYTE_3:  bus = data[111:104];
 		BYTE_4:  bus = data[103:96];
@@ -64,8 +63,7 @@ always @(*) begin
 		BYTE_14: bus = data[23:16];
 		BYTE_15: bus = data[15:8];
 		BYTE_16: bus = data[7:0];
-		//BYTE_16: bus = data[7:0];
-		//STOP   : enable = 1'b0;					
+			
 	endcase
 end
 
@@ -78,7 +76,6 @@ always @(posedge clk)
 always @(*) begin
 	next_state = current_state;
 	  case (current_state)
-		//IDLE   : if  ( !busy & start ) next_state = BYTE_1;
 		IDLE   : if  ( start )   next_state = BYTE_1;
 		BYTE_1 : if  ( !busy )   next_state = BYTE_2;
 		BYTE_2 : if  ( !busy )   next_state = BYTE_3;
@@ -96,8 +93,6 @@ always @(*) begin
 		BYTE_14 : if ( !busy )   next_state = BYTE_15;
 		BYTE_15 : if ( !busy )   next_state = BYTE_16;
 		BYTE_16 : if ( !busy ) 	 next_state = IDLE;
-		//BYTE_16 : if ( !busy ) 	 next_state = STOP;
-		//STOP   : 				 next_state = IDLE;
 		default : 				 next_state = IDLE;
 	  endcase
 	end

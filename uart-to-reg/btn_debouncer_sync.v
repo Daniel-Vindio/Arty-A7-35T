@@ -32,7 +32,6 @@ module btn_debouncer_syn
 	always @(posedge slow_clk) begin
 		sync1 <= btn;
 		sync2 <= sync1;
-		//btn_dboun <= ~sync2 & sync1;
 		sync4 <= ~sync2 & sync1;
 	end
 

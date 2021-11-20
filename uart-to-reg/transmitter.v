@@ -3,16 +3,15 @@
 `timescale 1ns/1ns
 
 module transmitter
- #(parameter DATASIZE = 128)		//Message size in bits.
-  (	input 				 clk,		//Clock signal.
-	input [DATASIZE-1:0] data,
-	input				 btn_start,		//Button synchro-debounced.
-	input				 reset,		// Swich?
-	output  			 txd_pin, 	//UART Transmit pin.
-	output wire [3:0]    led);	//Output to led display of signals.
+ #(parameter DATASIZE = 128)		   //Message size in bits.
+  (	input 				 clk,		   //Clock signal.
+	input				 btn_start,	   //Button synchro-debounced.
+	input				 reset,		   //Swich
+	output  			 txd_pin, 	   //UART Transmit pin.
+	output wire [3:0]    led);	       //Output to led display of signals.
 
  	
-localparam CLK_HZ = 100_000_000;	// Clock frequency in hertz.
+localparam CLK_HZ = 100_000_000;	   //Clock frequency in hertz.
 localparam BIT_RATE =     9_600;
 localparam PAYLOAD_BITS =     8;
 
@@ -20,8 +19,17 @@ wire [PAYLOAD_BITS-1:0]	bus;
 wire        			busy;
 wire        			enable;
 wire start;
+wire [5:0] state;
 
-assign led[0] = enable; //Useful to stop the test with wait.
+
+//reg  [DATASIZE-1:0] data = "Wake up, Neo...";
+reg  [DATASIZE-1:0] data = {"Wake up", 8'h0A, 8'h0D,"Neo."};
+
+assign led[0] = |state; //Useful to stop the test with wait.
+assign led[1] = btn_start;
+assign led[2] = reset;
+assign led[3] = txd_pin;
+
 
 btn_debouncer_syn
 #(.CLOCK_FREQ (100),
@@ -42,6 +50,7 @@ fsm_tx(
   .reset	(reset),
   .data 	(data),
   .enable	(enable),
+  .state	(state),
   .bus		(bus));
 
 
@@ -60,3 +69,4 @@ i_uart_tx(
 
 
 endmodule
+

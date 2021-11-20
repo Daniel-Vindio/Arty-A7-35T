@@ -9,7 +9,6 @@ parameter N = 8, M = 128;
 parameter tclk = 5; 
 
 reg clk = 0;
-reg  [M-1:0] data = "Wake up, Neo...";
 reg btn_start = 0;			
 reg reset = 1;
 wire txd_pin;
@@ -27,21 +26,17 @@ wire [3:0] led;
 	initial
 		begin
 			#(100*tclk) reset = 0;		
-			//#(20*tclk) btn_start = 1;
-			//#(20*tclk) btn_start = 0;
 			#(1e6*tclk) btn_start = 1;
 			#(1e5*tclk) btn_start = 0;
 			#(1e6*tclk) btn_start = 1;
 			#(1e5*tclk) btn_start = 0;
-			wait(!led[0]);
-			//#(1e6*tclk) btn_start = 1;
-			//#(1e5*tclk) btn_start = 0;
+			wait(!led[0]); 	//Stops when enable = 0 again.
 						
 			$finish;
 		end
 
 
-transmitter uut (clk, data, btn_start, reset, txd_pin, led);
+transmitter uut (clk, btn_start, reset, txd_pin, led);
 
 	/*
 	always #tclk $display (
