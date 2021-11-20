@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module test ();
 
@@ -9,12 +9,11 @@ module test ();
 
 	initial
 		begin
-			$dumpfile ("btn_debouncer.vcd");
+			$dumpfile ("btn_debouncer_syn.vcd");
 			$dumpvars;
-			#(2.2e6*tclk) $finish; //xe6*tclk -> x*tclk ms.
 		end
 	
-	always #(1*tclk) CLK = ~CLK;
+	always #(1*tclk) CLK = ~CLK;	//xe6*tclk -> x*tclk ms.
 	
 	initial
 		begin
@@ -24,12 +23,13 @@ module test ();
 		    #(1e5*tclk) BTN = 0;
 		    #(1e5*tclk) BTN = 1;
 		    #(1e5*tclk) BTN = 0;
+			#(1e5*tclk) $finish; 
 		end
 
 
-	btn_debouncer uut (CLK, BTN, BTN_DBOUN);
+	btn_debouncer_syn uut (CLK, BTN, BTN_DBOUN);
 	
-	always #tclk $display ("Time = %0t  CLK = %b, BTN = %b, BTN_DBOUN = %b", 
-				 $time, CLK, BTN, BTN_DBOUN);
+//always #tclk $display ("Time = %0t  CLK = %b, BTN = %b, BTN_DBOUN = %b", 
+//				 $time, CLK, BTN, BTN_DBOUN);
 
 endmodule

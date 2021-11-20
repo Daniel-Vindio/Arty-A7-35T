@@ -31,7 +31,7 @@ assign led[2] = reset;
 assign led[3] = txd_pin;
 
 
-btn_debouncer_syn
+btn_debouncer_sync
 #(.CLOCK_FREQ (100),
   .T_TRANS    (2))
 btn_deb_sync(

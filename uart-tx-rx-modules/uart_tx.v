@@ -1,9 +1,12 @@
+
+
 // 
 // Module: uart_tx 
 // 
 // Notes:
 // - UART transmitter module.
 //
+
 `timescale 1ns/1ns
 
 module uart_tx(
