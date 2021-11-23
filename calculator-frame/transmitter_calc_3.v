@@ -5,7 +5,7 @@
 module transmitter_calc
  #(parameter DATASIZE = 128)		   //Message size in bits.
   (	input 				 clk,		   //Clock signal.
-	input				 main_start,	   //Button synchro-debounced.
+	input				 main_start,   //Swich.
 	input				 reset,		   //Swich
 	output  			 txd_pin, 	   //UART Transmit pin.
 	output wire [3:0]    led);	       //Output to led display of signals.
@@ -19,9 +19,9 @@ wire [PAYLOAD_BITS-1:0]	bus;
 wire        			busy;
 wire        			enable;
 wire [5:0] state;
-wire sitm = (state == 6'd0 & busy == 0); 		//send it to me, fsm says.
+wire sitm = (state == 6'd6 & busy == 0); 		//send it to me, fsm says.
 reg go_fsm;
-wire start;
+reg start;
 
 
 //assign led[0] = |state; //Useful to stop the test with wait.
@@ -34,9 +34,9 @@ assign led[3] = txd_pin;
 //----------- FSM Screen Begin -----------------------------------------
 reg [DATASIZE-1:0] data;
 reg [DATASIZE-1:0] cls          = {8'h0C};
-reg [DATASIZE-1:0] header_1     = {"CALCULATOR", 8'h0A, 8'h0D};
-reg [DATASIZE-1:0] underline    = {"----------", 8'h0A, 8'h0D};
-reg [DATASIZE-1:0] input_1      = {"-> INPUT #1", 8'h0A, 8'h0D};
+reg [DATASIZE-1:0] header_1     = {8'h0A, 8'h0D, "CALCULATOR"};
+reg [DATASIZE-1:0] underline    = {8'h0A, 8'h0D, "----------"};
+reg [DATASIZE-1:0] input_1      = {8'h0A, 8'h0D, "->INPUT #1"};
 reg [DATASIZE-1:0] blank_line   = {8'h0A, 8'h0D};
 
 localparam  IDLE   = 3'd0,
@@ -52,11 +52,10 @@ reg [3:0] next_state;
 
 //Outputs of every state.
 always @(*) begin
-	go_fsm = 1'b1;
 	case (current_state)
 		IDLE   : begin
 					data  = 8'h00;
-					go_fsm = 1'b0;
+					start = 1'b1;
 				end
 		LINE_1 : data  = cls;
 		LINE_2 : data  = header_1;
@@ -65,7 +64,7 @@ always @(*) begin
 		LINE_5 : data  = blank_line;
 		STOP   : begin
 					data  = 8'h00;
-					go_fsm = 1'b0;
+					start = 1'b0;
 				end
 	endcase
 end
@@ -80,17 +79,15 @@ always @(*) begin
 	next_state = current_state;
 	case (current_state)
 		IDLE : if (main_start) next_state = LINE_1;
-		LINE_1 : if (main_start) next_state = LINE_2;
-		LINE_2 : if (main_start) next_state = LINE_3;
-		LINE_3 : if (main_start) next_state = LINE_4;
-		LINE_4 : if (main_start) next_state = LINE_5;
-		LINE_5 : if (main_start) next_state = STOP;
+		LINE_1 : if (sitm) next_state = LINE_2;
+		LINE_2 : if (sitm) next_state = LINE_3;
+		LINE_3 : if (sitm) next_state = LINE_4;
+		LINE_4 : if (sitm) next_state = LINE_5;
+		LINE_5 : if (sitm) next_state = STOP;
 		STOP :                   next_state = STOP;
 	endcase
 end
 //----------- FSM Screen End -------------------------------------------
-
-pulse pulse1(clk, go_fsm, start);
 
 
 fsm

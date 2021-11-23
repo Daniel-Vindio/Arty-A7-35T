@@ -26,7 +26,7 @@ wire [3:0] led;
 	initial
 		begin
 			#(5*tclk) reset = 0; main_start = 1;
-			#(1e7*tclk)$finish;
+			#(2e7*tclk)$finish;
 		end
 
 

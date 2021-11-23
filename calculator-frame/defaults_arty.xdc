@@ -11,7 +11,7 @@ create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports { c
 
 ## Switches
 set_property -dict { PACKAGE_PIN A8    IOSTANDARD LVCMOS33 } [get_ports { reset }]; #IO_L12N_T1_MRCC_16 Sch=sw[0]
-#set_property -dict { PACKAGE_PIN C11   IOSTANDARD LVCMOS33 } [get_ports { sw_1 }]; #IO_L13P_T2_MRCC_16 Sch=sw[1]
+set_property -dict { PACKAGE_PIN C11   IOSTANDARD LVCMOS33 } [get_ports { main_start }]; #IO_L13P_T2_MRCC_16 Sch=sw[1]
 
 
 ## USB-UART Interface
@@ -32,4 +32,4 @@ set_property -dict { PACKAGE_PIN T10   IOSTANDARD LVCMOS33 } [get_ports { led[3]
 
 
 ## Buttons
-set_property -dict { PACKAGE_PIN D9    IOSTANDARD LVCMOS33 } [get_ports { btn_start }]; #IO_L6N_T0_VREF_16 Sch=btn[0]
+#set_property -dict { PACKAGE_PIN D9    IOSTANDARD LVCMOS33 } [get_ports { btn_start }]; #IO_L6N_T0_VREF_16 Sch=btn[0]
