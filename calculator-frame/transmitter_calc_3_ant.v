@@ -40,14 +40,14 @@ reg [DATASIZE-1:0] underline    = {8'h0A, 8'h0D, "----------"};
 reg [DATASIZE-1:0] input_1      = {8'h0A, 8'h0D, ">INPUT#1:  "};
 reg [DATASIZE-1:0] blank_line   = {8'h00};
 
-localparam  IDLE   = 4'd0,
-			LINE_1 = 4'd1,
-			LINE_2 = 4'd2,
-			LINE_3 = 4'd3,
-			LINE_4 = 4'd4,
-			LINE_5 = 4'd5,
-			INPUT_1= 4'd6,
-			STOP   = 4'd7;
+localparam  IDLE   = 3'd0,
+			LINE_1 = 3'd1,
+			LINE_2 = 3'd2,
+			LINE_3 = 3'd3,
+			LINE_4 = 3'd4,
+			LINE_5 = 3'd5,
+			STOP   = 3'd6,
+			INPUT_1= 3'd7;
 
 reg [3:0] current_state;
 reg [3:0] next_state;
@@ -55,13 +55,20 @@ reg [3:0] next_state;
 //Outputs of every state.
 always @(*) begin
 	case (current_state)
-		IDLE   : begin data  = 8'h00; start = 1'b1; end
+		IDLE   : begin
+					data  = 8'h00;
+					start = 1'b1;
+				end
 		LINE_1 : data  = cls;
 		LINE_2 : data  = header_1;
 		LINE_3 : data  = underline;
 		LINE_4 : data  = input_1;
+		LINE_5 : data  = blank_line;
 		INPUT_1 : data = bus_rx;  //A loopback.
-		STOP   : begin data  = bus_rx; start = 1'b0; end
+		STOP   : begin
+					data  = bus_rx;
+					start = 1'b0;
+				end
 
 	endcase
 end
@@ -79,7 +86,8 @@ always @(*) begin
 		LINE_1 : if (sitm) next_state = LINE_2;
 		LINE_2 : if (sitm) next_state = LINE_3;
 		LINE_3 : if (sitm) next_state = LINE_4;
-		LINE_4 : if (sitm) next_state = INPUT_1;
+		LINE_4 : if (sitm) next_state = LINE_5;
+		LINE_5 : if (sitm) next_state = INPUT_1;
 		INPUT_1 : if (valid) next_state = STOP;
 		STOP :              next_state = STOP;
 
