@@ -53,9 +53,9 @@ endtask
 	initial
 		begin
 			#(5*tclk) reset = 0; main_start = 1;
-			#(2e7*tclk) to_send = "a"; send_byte(to_send);
-			#(2e7*tclk) to_send = "b"; send_byte(to_send);
-			#2e7 $finish;		
+			//#(2e7*tclk) to_send = "a"; send_byte(to_send);
+			//#(2e7*tclk) to_send = "b"; send_byte(to_send);
+			#2e8 $finish;		
 
 		end
 

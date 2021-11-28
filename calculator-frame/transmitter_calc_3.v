@@ -20,7 +20,7 @@ wire [PAYLOAD_BITS-1:0]	bus;
 wire        			busy;
 wire        			enable;
 wire [5:0] state;
-wire sitm = (state == 6'd6 & busy == 0); 		//send it to me, fsm says.
+wire sitm = (state == 5'd16 & busy == 0); 		//send it to me, fsm says.
 reg go_fsm;
 reg start;
 
@@ -37,17 +37,22 @@ reg [DATASIZE-1:0] data;
 reg [DATASIZE-1:0] cls          = {8'h0C};
 reg [DATASIZE-1:0] header_1     = {8'h0A, 8'h0D, "CALCULATOR"};
 reg [DATASIZE-1:0] underline    = {8'h0A, 8'h0D, "----------"};
-reg [DATASIZE-1:0] input_1      = {8'h0A, 8'h0D, ">INPUT#1:  "};
+reg [DATASIZE-1:0] input_1      = {8'h0A, 8'h0D, ">INPUT#1. "};
+reg [DATASIZE-1:0] input_2      = {8'h0A, 8'h0D, ">INPUT#2. "};
+reg [DATASIZE-1:0] operation    = {8'h0A, 8'h0D, ">OPERAT.  "};
+reg [DATASIZE-1:0] result       = {8'h0A, 8'h0D, "<>RESULT:"};
 reg [DATASIZE-1:0] blank_line   = {8'h00};
 
 localparam  IDLE   = 4'd0,
-			LINE_1 = 4'd1,
-			LINE_2 = 4'd2,
-			LINE_3 = 4'd3,
-			LINE_4 = 4'd4,
-			LINE_5 = 4'd5,
-			INPUT_1= 4'd6,
-			STOP   = 4'd7;
+			CLS    = 4'd1,
+			HEAD1  = 4'd2,
+			UNDERL = 4'd3,
+			INPUT1 = 4'd4,
+			INPUT2 = 4'd5,
+			OPERATION  = 4'd6,
+			RESULT = 4'd7,
+			STOP   = 4'd8,
+			ENTRA  = 4'd9;
 
 reg [3:0] current_state;
 reg [3:0] next_state;
@@ -55,14 +60,16 @@ reg [3:0] next_state;
 //Outputs of every state.
 always @(*) begin
 	case (current_state)
-		IDLE   : begin data  = 8'h00; start = 1'b1; end
-		LINE_1 : data  = cls;
-		LINE_2 : data  = header_1;
-		LINE_3 : data  = underline;
-		LINE_4 : data  = input_1;
-		INPUT_1 : data = bus_rx;  //A loopback.
-		STOP   : begin data  = bus_rx; start = 1'b0; end
-
+		IDLE   : begin data  = 8'h00; start = 1'b1;	end
+		CLS    : data  = cls;
+		HEAD1  : data  = header_1;
+		UNDERL : data  = underline;
+		INPUT1 : data  = input_1;
+		INPUT2 : data  = input_2;
+		OPERATION : data  = operation;
+		RESULT : data  = result;
+		STOP   : begin data  = 00; start = 1'b0; end
+		//ENTRA : data = bus_rx;
 	endcase
 end
 
@@ -75,18 +82,17 @@ always @(posedge clk)
 always @(*) begin
 	next_state = current_state;
 	case (current_state)
-		IDLE : if (main_start) next_state = LINE_1;
-		LINE_1 : if (sitm) next_state = LINE_2;
-		LINE_2 : if (sitm) next_state = LINE_3;
-		LINE_3 : if (sitm) next_state = LINE_4;
-		LINE_4 : if (sitm) next_state = INPUT_1;
-		INPUT_1 : if (valid) next_state = STOP;
-		STOP :              next_state = STOP;
-
+		IDLE   : if (main_start) next_state = CLS;
+		CLS    : if (sitm) next_state = HEAD1;
+		HEAD1  : if (sitm) next_state = UNDERL;
+		UNDERL : if (sitm) next_state = INPUT1;
+		INPUT1 : if (sitm) next_state = INPUT2;
+		INPUT2 : if (sitm) next_state = OPERATION;
+		OPERATION : if (sitm) next_state = RESULT;
+		RESULT : if (sitm) next_state = STOP;
+		STOP  :            next_state = STOP;
 	endcase
 end
-//----------- FSM Screen End -------------------------------------------
-
 
 fsm
 #(.N		(PAYLOAD_BITS),
