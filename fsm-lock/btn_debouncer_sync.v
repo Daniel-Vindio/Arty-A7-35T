@@ -12,19 +12,19 @@ module btn_debouncer_sync
 	 output reg btn_dboun);
 
 	//Comment for synth. & implement. Begin.
-	localparam COUNT_BIT = $clog2(CLOCK_FREQ * T_TRANS * $pow(10, 3));
-	localparam SEMI_PERIOD = $pow(2, COUNT_BIT-1);
-	reg [COUNT_BIT-1:0] counter = 0;
+	//localparam COUNT_BIT = $clog2(CLOCK_FREQ * T_TRANS * $pow(10, 3));
+	//localparam SEMI_PERIOD = $pow(2, COUNT_BIT-1);
+	//reg [COUNT_BIT-1:0] counter = 0;
 	//Comment for synth. & implement. End.
 	
-	//reg [17:0] counter = 0; //Uncomment for synth. & implement.
+	reg [17:0] counter = 0; //Uncomment for synth. & implement.
 	
 	reg slow_clk = 0;
 	
 	always @(posedge clk) begin
 		counter <= counter + 1;
-		slow_clk <= (counter < SEMI_PERIOD) ? 1 : 0;  //Comment for synth. & implement.
-		//slow_clk <= (counter < 18'd131072) ? 1 : 0; //Uncomment for synth. & implement.
+		//slow_clk <= (counter < SEMI_PERIOD) ? 1 : 0;  //Comment for synth. & implement.
+		slow_clk <= (counter < 18'd131072) ? 1 : 0; //Uncomment for synth. & implement.
 	end
 	
 // Debouncing.	
@@ -44,9 +44,9 @@ module btn_debouncer_sync
 	end
 	
 	//Comment for synth. & implement. Begin.
-	initial $display ("COUNT_BIT = %d\n", COUNT_BIT,
-					  "SEMI_PERIOD = %d", SEMI_PERIOD,
-					  "\n\nBe patient, it takes a little while...");
+	//initial $display ("COUNT_BIT = %d\n", COUNT_BIT,
+	//				  "SEMI_PERIOD = %d", SEMI_PERIOD,
+	//				  "\n\nBe patient, it takes a little while...");
 	//Comment for synth. & implement. End.
 
 endmodule
