@@ -1,3 +1,8 @@
+// Daniel Gutiérrez
+// audobra@gmail.com
+// Nov 20, 2021
+
+
 module main
 	#(parameter WORD = 4)
 	(input clk,
