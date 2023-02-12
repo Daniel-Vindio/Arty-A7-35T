@@ -1,3 +1,7 @@
+// Daniel Gutiérrez
+// audobra@gmail.com
+// Nov 20, 2021
+
 /*
 The purpose of this module is to graduate the light intensity of the LED. 
 The default intensity is too high, and it dazzles you, especially when 
