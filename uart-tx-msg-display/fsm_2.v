@@ -1,3 +1,7 @@
+// Daniel Gutiérrez
+// audobra@gmail.com
+// Nov 20, 2021
+
 //Finite state machine to feed the TX module. It is used to divide the 
 //message into 8-bit fragments (which precisely match the ASCII 
 //characters of the message).
