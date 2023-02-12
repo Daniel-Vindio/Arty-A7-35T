@@ -1,5 +1,10 @@
+// Daniel Gutiérrez
+// audobra@gmail.com
+// Nov 20, 2021
+
 //This module combines a functionality to divide the data string 
 //into 8-bit fragments, with the transmission module.
+
 `timescale 1ns/1ns
 
 module transmitter
