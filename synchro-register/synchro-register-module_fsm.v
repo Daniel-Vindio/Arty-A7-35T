@@ -1,3 +1,7 @@
+// Daniel Gutiérrez
+// audobra@gmail.com
+// Nov 20, 2021
+
 /*
 The objective of this module is to capture a nibble (4 bits) by means 
 of the buttons (push-buttons) of Arty A7. For this, the data entry is 
