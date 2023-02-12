@@ -1,3 +1,7 @@
+// Daniel Gutiérrez
+// audobra@gmail.com
+// Nov 20, 2021
+
 //Example for the implementation of the led dimmer 
 
 `timescale 1ns/1ns
